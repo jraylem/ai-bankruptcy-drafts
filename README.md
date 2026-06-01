@@ -1,4 +1,4 @@
-# BKDrafts — Monorepo
+# AI-powered bankruptcy drafting assistant
 
 AI-powered bankruptcy drafting assistant. This monorepo contains the **backend** (Python/FastAPI) and **frontend** (React/Vite/TypeScript) for the full application.
 
