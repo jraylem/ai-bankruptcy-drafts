@@ -1,0 +1,983 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap');
+
+@import 'tailwindcss';
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --app-bg-page: #f7f9fb;
+  --app-bg-surface: #ffffff;
+  --app-bg-surface-muted: #f8fafc;
+  --app-bg-surface-elevated: #ffffff;
+  --app-bg-overlay: transparent;
+  --app-text-primary: #0f172a;
+  --app-text-secondary: #334155;
+  --app-text-muted: #64748b;
+  --app-text-subtle: #94a3b8;
+  --app-border-subtle: #e2e8f0;
+  --app-border-strong: #cbd5e1;
+  --app-accent: #4f46e5;
+  --app-accent-soft: #eef2ff;
+  --app-accent-text: #4338ca;
+  --app-auth-bg-from: #e0e7ff;
+  --app-auth-bg-via: #faf5ff;
+  --app-auth-bg-to: #fce7f3;
+  --app-auth-blob-purple: #d8b4fe;
+  --app-auth-blob-indigo: #a5b4fc;
+  --app-auth-blob-pink: #f9a8d4;
+  --app-auth-card-bg: rgba(255, 255, 255, 0.9);
+  --app-auth-text-body: #4b5563;
+  --app-auth-text-muted: #6b7280;
+  --app-auth-divider: #e5e7eb;
+  --app-auth-link: #4f46e5;
+  --app-auth-link-hover: #9333ea;
+  --app-auth-error-bg: #fef2f2;
+  --app-auth-error-border: #fecaca;
+  --app-auth-error-text: #b91c1c;
+  --app-option-card-bg: #f8fafc;
+  --app-option-card-bg-hover: #ffffff;
+  --app-option-card-border: #e2e8f0;
+  --app-option-card-border-hover: #cbd5e1;
+  --app-option-selected-bg: #ffffff;
+  --app-option-selected-border: #6366f1;
+  --app-option-selected-ring: #e0e7ff;
+  --app-option-icon-bg: #e0e7ff;
+  --app-option-icon-text: #4338ca;
+  --app-option-icon-bg-hover: #c7d2fe;
+  --app-success-soft: #ecfdf5;
+  --app-success-text: #047857;
+  --app-warning-soft: #fffbeb;
+  --app-warning-text: #b45309;
+  --app-danger-soft: #fff1f2;
+  --app-danger-text: #be123c;
+  --app-danger: #dc2626;
+  --app-danger-strong: #b91c1c;
+  --app-danger-border: #fca5a5;
+  --app-chart-grid: #e2e8f0;
+  --app-chart-axis: #94a3b8;
+  --app-chart-tooltip-bg: rgba(248, 250, 252, 0.95);
+  --app-chart-tooltip-border: rgba(203, 213, 225, 0.72);
+  --app-chart-cursor-fill: rgba(248, 250, 252, 0.72);
+  --app-chart-cursor-stroke: #cbd5e1;
+  --app-pdf-control-bg: rgba(248, 250, 252, 0.58);
+  --app-pdf-control-border: rgba(148, 163, 184, 0.55);
+  --app-pdf-control-text: #0f172a;
+  --app-pdf-control-divider: rgba(100, 116, 139, 0.42);
+  --app-pdf-control-hover: rgba(148, 163, 184, 0.22);
+  --app-activity-row-hover: rgba(241, 245, 249, 0.88);
+  --app-studio-dot: rgba(100, 116, 139, 0.45);
+  --app-studio-dot-bright: rgba(51, 65, 85, 0.7);
+}
+
+[data-theme='dark'] {
+  /* Reference-matched dark scheme: near-neutral deep charcoal (no blue
+     tint), soft off-white text, quiet borders, and a violet accent — tuned
+     to be easy on the eyes rather than high-contrast. */
+  --app-bg-page: #0e0e11;
+  --app-bg-surface: #15151a;
+  --app-bg-surface-muted: #1c1c22;
+  --app-bg-surface-elevated: #24242c;
+  --app-bg-overlay: transparent;
+  --app-text-primary: #e8e8ea;
+  --app-text-secondary: #b0b0b8;
+  --app-text-muted: #80808a;
+  --app-text-subtle: #5e5e68;
+  --app-border-subtle: #232329;
+  --app-border-strong: #313139;
+  --app-accent: #8b5cf6;
+  --app-accent-soft: rgba(139, 92, 246, 0.15);
+  --app-accent-text: #c4b5fd;
+  --app-auth-bg-from: #111827;
+  --app-auth-bg-via: #1f2937;
+  --app-auth-bg-to: #2b1a2f;
+  --app-auth-blob-purple: #7c3aed;
+  --app-auth-blob-indigo: #4f46e5;
+  --app-auth-blob-pink: #be185d;
+  --app-auth-card-bg: rgba(22, 27, 34, 0.9);
+  --app-auth-text-body: #cbd5e1;
+  --app-auth-text-muted: #94a3b8;
+  --app-auth-divider: #2d3848;
+  --app-auth-link: #a5b4fc;
+  --app-auth-link-hover: #c4b5fd;
+  --app-auth-error-bg: rgba(244, 63, 94, 0.14);
+  --app-auth-error-border: rgba(251, 113, 133, 0.35);
+  --app-auth-error-text: #fda4af;
+  --app-option-card-bg: var(--app-bg-surface-muted);
+  --app-option-card-bg-hover: var(--app-bg-surface);
+  --app-option-card-border: var(--app-border-subtle);
+  --app-option-card-border-hover: var(--app-border-strong);
+  --app-option-selected-bg: var(--app-bg-surface);
+  --app-option-selected-border: var(--app-accent);
+  --app-option-selected-ring: rgba(139, 92, 246, 0.24);
+  --app-option-icon-bg: var(--app-accent-soft);
+  --app-option-icon-text: var(--app-accent-text);
+  --app-option-icon-bg-hover: rgba(139, 92, 246, 0.24);
+  --app-success-soft: rgba(16, 185, 129, 0.16);
+  --app-success-text: #34d399;
+  --app-warning-soft: rgba(245, 158, 11, 0.16);
+  --app-warning-text: #fbbf24;
+  --app-danger-soft: rgba(244, 63, 94, 0.16);
+  --app-danger-text: #fb7185;
+  --app-danger: #ef4444;
+  --app-danger-strong: #dc2626;
+  --app-danger-border: rgba(244, 63, 94, 0.45);
+  --app-chart-grid: #2a3242;
+  --app-chart-axis: #8c99ad;
+  --app-chart-tooltip-bg: rgba(24, 31, 42, 0.95);
+  --app-chart-tooltip-border: rgba(58, 73, 95, 0.8);
+  --app-chart-cursor-fill: rgba(42, 50, 66, 0.48);
+  --app-chart-cursor-stroke: #3a4558;
+  --app-pdf-control-bg: rgba(15, 23, 42, 0.5);
+  --app-pdf-control-border: rgba(226, 232, 240, 0.45);
+  --app-pdf-control-text: #e6edf3;
+  --app-pdf-control-divider: rgba(226, 232, 240, 0.34);
+  --app-pdf-control-hover: rgba(226, 232, 240, 0.14);
+  --app-activity-row-hover: rgba(139, 92, 246, 0.14);
+  --app-studio-dot: rgba(148, 163, 184, 0.22);
+  --app-studio-dot-bright: rgba(203, 213, 225, 0.55);
+}
+
+@keyframes onboardingShuffleA {
+  0%,
+  28%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(-6deg);
+  }
+  42%,
+  58% {
+    transform: translate3d(48px, 16px, 0) rotate(2deg);
+  }
+  72%,
+  86% {
+    transform: translate3d(96px, -1px, 0) rotate(7deg);
+  }
+}
+
+@keyframes onboardingShuffleB {
+  0%,
+  28%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(3deg);
+  }
+  42%,
+  58% {
+    transform: translate3d(48px, -14px, 0) rotate(7deg);
+  }
+  72%,
+  86% {
+    transform: translate3d(-52px, -3px, 0) rotate(-6deg);
+  }
+}
+
+@keyframes onboardingShuffleC {
+  0%,
+  28%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(7deg);
+  }
+  42%,
+  58% {
+    transform: translate3d(-96px, 1px, 0) rotate(-6deg);
+  }
+  72%,
+  86% {
+    transform: translate3d(-48px, 16px, 0) rotate(2deg);
+  }
+}
+
+@keyframes onboardingEmailSend {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 44px, 0) scale(0.82);
+  }
+  18% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 1;
+    transform: translate3d(122px, 60px, 0) scale(1);
+  }
+  80%,
+  100% {
+    opacity: 0;
+    transform: translate3d(132px, 72px, 0) scale(0.7);
+  }
+}
+
+@keyframes onboardingReviewCheck {
+  0%,
+  12%,
+  100% {
+    background-color: var(--surface-muted);
+    color: #ffffff;
+  }
+  28%,
+  48% {
+    background-color: rgba(34, 197, 94, 0.14);
+    color: var(--app-success-text);
+  }
+}
+
+@keyframes pricingPlanBorderSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pricingPlanEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.965);
+  }
+
+  64% {
+    opacity: 1;
+    transform: translateY(-2px) scale(1.006);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes pricingPlanContentEnter {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.pricing-page {
+  position: relative;
+}
+
+.pricing-page-ambient {
+  background:
+    radial-gradient(circle at 12% 6%, rgba(79, 70, 229, 0.42), transparent 26%),
+    radial-gradient(circle at 42% 0%, rgba(14, 165, 233, 0.32), transparent 28%),
+    radial-gradient(circle at 34% 100%, rgba(236, 72, 153, 0.28), transparent 24%),
+    linear-gradient(115deg, rgba(248, 250, 252, 0.15), rgba(226, 232, 240, 0.9));
+  inset: 0;
+  pointer-events: none;
+  position: fixed;
+}
+
+.pricing-shell {
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 30px;
+  box-shadow: 0 26px 80px rgba(15, 23, 42, 0.12);
+  min-height: calc(100vh - 5rem);
+  position: relative;
+  z-index: 1;
+}
+
+.pricing-card-frame {
+  animation: pricingPlanEnter 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  border-radius: 24px;
+  display: flex;
+  overflow: hidden;
+  padding: 1px;
+  position: relative;
+}
+
+.pricing-card-frame:nth-child(2) {
+  animation-delay: 180ms;
+}
+
+.pricing-card-frame::before {
+  background:
+    conic-gradient(
+      from 0deg,
+      rgba(79, 70, 229, 0.08),
+      rgba(129, 140, 248, 0.58),
+      rgba(236, 72, 153, 0.48),
+      rgba(14, 165, 233, 0.5),
+      rgba(79, 70, 229, 0.08)
+    );
+  content: '';
+  inset: -48%;
+  opacity: 0.28;
+  position: absolute;
+  transition: opacity 240ms ease;
+}
+
+.pricing-card-frame:hover::before,
+.pricing-card-frame:focus-within::before,
+.pricing-card-frame-accent::before {
+  animation: pricingPlanBorderSpin 2.8s linear infinite;
+  opacity: 0.72;
+}
+
+.pricing-card-inner {
+  border-radius: 23px;
+  height: 100%;
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+.pricing-card-content {
+  animation: pricingPlanContentEnter 420ms ease-out both;
+  opacity: 0;
+}
+
+.pricing-card-frame:nth-child(1) .pricing-card-content-1 {
+  animation-delay: 430ms;
+}
+
+.pricing-card-frame:nth-child(1) .pricing-card-content-2 {
+  animation-delay: 520ms;
+}
+
+.pricing-card-frame:nth-child(1) .pricing-card-content-3 {
+  animation-delay: 610ms;
+}
+
+.pricing-card-frame:nth-child(1) .pricing-card-content-4 {
+  animation-delay: 700ms;
+}
+
+.pricing-card-frame:nth-child(2) .pricing-card-content-1 {
+  animation-delay: 620ms;
+}
+
+.pricing-card-frame:nth-child(2) .pricing-card-content-2 {
+  animation-delay: 710ms;
+}
+
+.pricing-card-frame:nth-child(2) .pricing-card-content-3 {
+  animation-delay: 800ms;
+}
+
+.pricing-card-frame:nth-child(2) .pricing-card-content-4 {
+  animation-delay: 890ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-card-frame,
+  .pricing-card-content {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .pricing-card-frame:hover::before,
+  .pricing-card-frame:focus-within::before,
+  .pricing-card-frame-accent::before {
+    animation: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .pricing-shell {
+    border-radius: 22px;
+  }
+}
+
+@theme {
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  --color-red-50: #fef2f2;
+  --color-red-100: #fee2e2;
+  --color-red-200: #fecaca;
+  --color-red-300: #fca5a5;
+  --color-red-400: #f87171;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-red-800: #991b1b;
+  --color-red-900: #7f1d1d;
+  --color-app-page: var(--app-bg-page);
+  --color-app-surface: var(--app-bg-surface);
+  --color-app-surface-muted: var(--app-bg-surface-muted);
+  --color-app-surface-elevated: var(--app-bg-surface-elevated);
+  --color-app-overlay: var(--app-bg-overlay);
+  --color-app-text-primary: var(--app-text-primary);
+  --color-app-text-secondary: var(--app-text-secondary);
+  --color-app-text-muted: var(--app-text-muted);
+  --color-app-text-subtle: var(--app-text-subtle);
+  --color-app-border: var(--app-border-subtle);
+  --color-app-border-strong: var(--app-border-strong);
+  --color-app-accent: var(--app-accent);
+  --color-app-accent-soft: var(--app-accent-soft);
+  --color-app-accent-text: var(--app-accent-text);
+  --color-auth-bg-from: var(--app-auth-bg-from);
+  --color-auth-bg-via: var(--app-auth-bg-via);
+  --color-auth-bg-to: var(--app-auth-bg-to);
+  --color-auth-blob-purple: var(--app-auth-blob-purple);
+  --color-auth-blob-indigo: var(--app-auth-blob-indigo);
+  --color-auth-blob-pink: var(--app-auth-blob-pink);
+  --color-auth-card: var(--app-auth-card-bg);
+  --color-auth-text: var(--app-auth-text-body);
+  --color-auth-muted: var(--app-auth-text-muted);
+  --color-auth-divider: var(--app-auth-divider);
+  --color-auth-link: var(--app-auth-link);
+  --color-auth-link-hover: var(--app-auth-link-hover);
+  --color-auth-error-bg: var(--app-auth-error-bg);
+  --color-auth-error-border: var(--app-auth-error-border);
+  --color-auth-error-text: var(--app-auth-error-text);
+  --color-pdf-control: var(--app-pdf-control-bg);
+  --color-pdf-control-border: var(--app-pdf-control-border);
+  --color-pdf-control-text: var(--app-pdf-control-text);
+  --color-pdf-control-divider: var(--app-pdf-control-divider);
+  --color-pdf-control-hover: var(--app-pdf-control-hover);
+  --color-activity-row-hover: var(--app-activity-row-hover);
+  --color-option-card: var(--app-option-card-bg);
+  --color-option-card-hover: var(--app-option-card-bg-hover);
+  --color-option-card-border: var(--app-option-card-border);
+  --color-option-card-border-hover: var(--app-option-card-border-hover);
+  --color-option-selected: var(--app-option-selected-bg);
+  --color-option-selected-border: var(--app-option-selected-border);
+  --color-option-selected-ring: var(--app-option-selected-ring);
+  --color-option-icon-bg: var(--app-option-icon-bg);
+  --color-option-icon-text: var(--app-option-icon-text);
+  --color-option-icon-hover: var(--app-option-icon-bg-hover);
+  --color-app-success-soft: var(--app-success-soft);
+  --color-app-success-text: var(--app-success-text);
+  --color-app-warning-soft: var(--app-warning-soft);
+  --color-app-warning-text: var(--app-warning-text);
+  --color-app-danger-soft: var(--app-danger-soft);
+  --color-app-danger-text: var(--app-danger-text);
+  --color-app-danger: var(--app-danger);
+  --color-app-danger-strong: var(--app-danger-strong);
+  --color-app-danger-border: var(--app-danger-border);
+  --color-page: var(--app-bg-page);
+  --color-surface: var(--app-bg-surface);
+  --color-surface-muted: var(--app-bg-surface-muted);
+  --color-border: var(--app-border-subtle);
+  --color-text: var(--app-text-primary);
+  --color-text-secondary: var(--app-text-secondary);
+  --color-muted: var(--app-text-muted);
+  --color-subtle: var(--app-text-subtle);
+  --color-chart-grid: var(--app-chart-grid);
+  --color-chart-axis: var(--app-chart-axis);
+}
+
+body {
+  font-family:
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+  background-color: var(--app-bg-page);
+  color: var(--app-text-primary);
+  transition:
+    background-color 180ms ease,
+    color 180ms ease;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+[data-theme='dark'] .app-modal-panel button:not(:disabled)[class*='bg-indigo-600']:hover,
+[data-theme='dark'] .app-modal-panel button:not(:disabled)[class*='bg-blue-600']:hover,
+[data-theme='dark'] .app-modal-panel button:not(:disabled)[class*='bg-primary-600']:hover,
+[data-theme='dark'] .app-modal-panel button:not(:disabled)[class*='bg-app-accent']:hover,
+[data-theme='dark'] .app-modal-panel button:not(:disabled)[class*='from-indigo-600']:hover,
+[data-theme='dark'] .app-modal-panel button:not(:disabled)[class*='hover:shadow-indigo-']:hover {
+  box-shadow:
+    0 14px 26px -18px rgba(129, 140, 248, 0.45),
+    0 8px 18px -14px rgba(0, 0, 0, 0.72) !important;
+}
+
+[data-theme='dark'] .ai-chat-trigger {
+  background: linear-gradient(135deg, rgba(32, 41, 56, 0.98), rgba(22, 27, 34, 0.98));
+  box-shadow:
+    0 14px 30px rgba(2, 6, 23, 0.68),
+    0 0 16px rgba(129, 140, 248, 0.18);
+}
+
+[data-theme='dark'] .ai-chat-trigger:hover {
+  background: linear-gradient(135deg, rgba(38, 49, 68, 0.98), rgba(28, 35, 48, 0.98));
+  box-shadow:
+    0 18px 36px rgba(2, 6, 23, 0.72),
+    0 0 20px rgba(129, 140, 248, 0.24);
+}
+
+[data-theme='dark'] .ai-chat-trigger .ai-chat-trigger-icon {
+  color: #dbe4ff;
+}
+
+.rdp-selected-day .rdp-day-trigger,
+.rdp-selected-day .rdp-day-trigger:hover {
+  background: var(--app-accent);
+  color: #ffffff !important;
+  border-radius: 0.75rem;
+}
+
+.rdp-selected-day-circle .rdp-day-trigger,
+.rdp-selected-day-circle .rdp-day-trigger:hover {
+  background: #4f46e5;
+  color: #ffffff !important;
+  border-radius: 9999px;
+}
+
+.rdp-today:not(.rdp-selected-day) .rdp-day-trigger,
+.rdp-today:not(.rdp-selected-day) .rdp-day-trigger:hover {
+  color: var(--app-accent-text);
+}
+
+.font-poppins {
+  font-family:
+    'Poppins',
+    'Inter',
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+.dark .logo-on-dark {
+  filter: brightness(0) invert(1) saturate(0) brightness(1.2);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Streaming Animations */
+.animate-bounce-dot {
+  animation: bounceDot 1.4s infinite ease-in-out both;
+}
+
+.animation-delay-0 {
+  animation-delay: -0.32s;
+}
+
+.animation-delay-200 {
+  animation-delay: -0.16s;
+}
+
+.animation-delay-400 {
+  animation-delay: 0s;
+}
+
+@keyframes bounceDot {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+    opacity: 0.3;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.animate-ai-avatar-presence {
+  animation: aiAvatarPresence 2.15s ease-in-out infinite;
+  will-change: transform, opacity;
+  transform-origin: center;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  display: block;
+}
+
+@keyframes aiAvatarPresence {
+  0%,
+  100% {
+    transform: translateZ(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateZ(0) scale(1.08);
+    opacity: 0.84;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Custom scrollbar styling */
+textarea::-webkit-scrollbar {
+  width: 6px;
+}
+
+textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+textarea::-webkit-scrollbar-thumb {
+  background: var(--app-border-strong);
+  border-radius: 3px;
+}
+
+textarea::-webkit-scrollbar-thumb:hover {
+  background: var(--app-text-subtle);
+}
+
+/* Bankruptcy Review Styling */
+.prose {
+  max-width: none !important;
+}
+
+.prose h1 {
+  @apply text-2xl font-bold text-gray-900 mb-4 mt-6 pb-2 border-b-2 border-primary-200;
+}
+
+.prose h2 {
+  @apply text-xl font-semibold text-gray-800 mb-3 mt-5;
+}
+
+.prose h3 {
+  @apply text-lg font-semibold text-gray-700 mb-2 mt-4;
+}
+
+.prose h4 {
+  @apply text-base font-semibold text-gray-700 mb-2 mt-3;
+}
+
+.prose p {
+  @apply text-gray-700 leading-relaxed mb-3;
+}
+
+.prose ul {
+  @apply space-y-2 mb-4;
+}
+
+.prose ol {
+  @apply space-y-2 mb-4;
+}
+
+.prose li {
+  @apply text-gray-700 leading-relaxed;
+}
+
+.prose li::marker {
+  @apply text-primary-600 font-semibold;
+}
+
+.prose strong {
+  @apply text-gray-900 font-semibold;
+}
+
+.prose em {
+  @apply text-gray-600 italic;
+}
+
+.prose code {
+  @apply bg-gray-100 px-2 py-0.5 rounded text-sm text-gray-800 font-mono;
+}
+
+.prose pre {
+  @apply bg-gray-50 p-4 rounded-lg overflow-x-auto mb-4 border border-gray-200;
+}
+
+.prose pre code {
+  @apply bg-transparent p-0;
+}
+
+.prose blockquote {
+  @apply border-l-4 border-primary-400 pl-4 py-2 my-4 bg-primary-50 rounded-r;
+}
+
+.prose hr {
+  @apply border-gray-300 my-6;
+}
+
+.prose table {
+  @apply w-full border-collapse mb-4;
+}
+
+.prose th {
+  @apply bg-primary-50 text-left px-4 py-2 font-semibold text-gray-700 border border-gray-300;
+}
+
+.prose td {
+  @apply px-4 py-2 border border-gray-300 text-gray-700;
+}
+
+.prose tr:nth-child(even) {
+  @apply bg-gray-50;
+}
+
+.dark .prose h1 {
+  @apply border-slate-800 text-slate-100;
+}
+
+.dark .prose h2,
+.dark .prose h3,
+.dark .prose h4 {
+  @apply text-slate-200;
+}
+
+.dark .prose p,
+.dark .prose li,
+.dark .prose td {
+  @apply text-slate-300;
+}
+
+.dark .prose strong {
+  @apply text-slate-100;
+}
+
+.dark .prose em {
+  @apply text-slate-400;
+}
+
+.dark .prose code {
+  @apply bg-slate-800 text-slate-200;
+}
+
+.dark .prose pre {
+  @apply border-slate-800 bg-slate-900;
+}
+
+.dark .prose blockquote {
+  @apply border-indigo-500 bg-indigo-950/40 text-slate-300;
+}
+
+.dark .prose hr {
+  @apply border-slate-800;
+}
+
+.dark .prose th {
+  @apply border-slate-800 bg-slate-800 text-slate-200;
+}
+
+.dark .prose td {
+  @apply border-slate-800;
+}
+
+.dark .prose tr:nth-child(even) {
+  @apply bg-slate-900;
+}
+
+.analytics-chart-shell :where(.recharts-wrapper, .recharts-surface, svg, [tabindex]):focus,
+.analytics-chart-shell :where(.recharts-wrapper, .recharts-surface, svg, [tabindex]):focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Checkmark and icon styling for lists */
+.prose li:has(input[type='checkbox']) {
+  @apply flex items-start gap-2;
+}
+
+.prose input[type='checkbox'] {
+  @apply mt-1 w-4 h-4 accent-primary-600;
+}
+
+/* Special styling for sections */
+.prose li:first-line {
+  @apply font-medium;
+}
+
+/* Streaming Indicator Animations */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-in-out infinite;
+}
+
+@keyframes icon-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+.animate-icon-float {
+  animation: icon-float 2.5s ease-in-out infinite;
+}
+
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 4s linear infinite;
+}
+
+@keyframes verb-in {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.animate-verb-in {
+  animation: verb-in 600ms ease-out both;
+}
+
+@keyframes shimmer-sweep {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.animate-shimmer-sweep {
+  background-size: 200% 100%;
+  animation: shimmer-sweep 3s linear infinite;
+}
+
+@keyframes dots-bounce {
+  0%,
+  80%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  40% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+}
+
+.animate-dot-1 {
+  animation: dots-bounce 1.2s ease-in-out 0s infinite;
+}
+.animate-dot-2 {
+  animation: dots-bounce 1.2s ease-in-out 0.15s infinite;
+}
+.animate-dot-3 {
+  animation: dots-bounce 1.2s ease-in-out 0.3s infinite;
+}
+
+#studio-template-preview .e-spinner-pane,
+#studio-template-preview .e-spin-overlay,
+#studio-template-preview .e-de-loading-spinner {
+  display: none !important;
+}
+
+/* studio-v2: shake-once for failed save feedback on the filing role picker. */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-4px); }
+  40% { transform: translateX(4px); }
+  60% { transform: translateX(-3px); }
+  80% { transform: translateX(2px); }
+}
+
+/* Running-line border halo for the document viewer modal while loading.
+   An SVG <rect> with a multi-colored gradient stroke is dashed so only a
+   slice of its perimeter is visible at a time; animating stroke-dashoffset
+   makes that slice flow around the border like a light running along a
+   wire. Multiple drop-shadows give it a glowing aura. The SVG sits behind
+   the panel (in Modal.tsx) so the glow halo bleeds outside the modal's
+   rounded corners. */
+@keyframes glow-border-march {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.glow-border-line {
+  /* pathLength is normalized to 100 on the rect so the dash math is
+     resolution-independent: 22 = 22% of the perimeter is visible at once.
+     Single drop-shadow (instead of a stacked trio) keeps the per-frame
+     rasterization cost low so the animation stays smooth under load —
+     Syncfusion's editor warm-up runs in parallel and hogs the main thread. */
+  animation: glow-border-march 3s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(168, 85, 247, 0.75));
+  will-change: stroke-dashoffset;
+  transform: translateZ(0);
+}
+
+/* Case-row / case-tile streaming halo. Same running-stripe animation as
+   `.glow-border-line` but without the drop-shadow filter — the glow is
+   now a separate STATIC aura rendered on the wrapper (.case-stream-glow
+   below), so the stripe motion and the halo glow no longer share a
+   moving filter pipeline. The stripe traces the border; the aura sits
+   still and surrounds the whole row. */
+.case-stream-halo {
+  animation: glow-border-march 3s linear infinite;
+  will-change: stroke-dashoffset;
+  transform: translateZ(0);
+}
+
+/* Static glow halo wrapping the row / tile while streaming. Sized to
+   match the 2px running-stripe stroke: a single soft box-shadow with
+   a ~3px blur extends the glow just outside the border path without
+   bleeding into adjacent rows. */
+.case-stream-glow {
+  box-shadow: 0 0 3px 0 rgba(139, 92, 246, 0.65);
+}
+
+[data-theme='dark'] .case-stream-glow {
+  box-shadow: 0 0 4px 0 rgba(167, 139, 250, 0.8);
+}

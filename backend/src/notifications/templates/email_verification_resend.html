@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>Here's your new verification link</h2>
+<p>You requested a new verification link for your Jurisgentic account. Click the button below to verify your email address.</p>
+<p>This link expires in <strong>24 hours</strong>.</p>
+<a href="{{ verify_url }}" class="btn">Verify Email Address</a>
+<p>If you didn't request this, you can safely ignore this email — your account remains unchanged.</p>
+<p style="font-size:13px; color:#6b7280;">Or copy and paste this link: {{ verify_url }}</p>
+{% endblock %}

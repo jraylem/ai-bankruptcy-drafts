@@ -1,0 +1,8 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>Action required: payment failed</h2>
+<p>We were unable to process the payment for your Jurisgentic subscription for <strong>{{ firm_name }}</strong>.</p>
+<p>To keep your access uninterrupted, please update your payment method as soon as possible.</p>
+<a href="{{ portal_url }}" class="btn">Update Payment Method</a>
+<p>If you continue to have trouble, reply to this email and we'll help you resolve it.</p>
+{% endblock %}

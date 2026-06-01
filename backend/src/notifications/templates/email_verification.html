@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>Verify your Jurisgentic account</h2>
+<p>Thanks for signing up! Click the button below to verify your email address and activate your account.</p>
+<p>This link expires in <strong>24 hours</strong>.</p>
+<a href="{{ verify_url }}" class="btn">Verify Email Address</a>
+<p>If you didn't create a Jurisgentic account, you can safely ignore this email.</p>
+<p style="font-size:13px; color:#6b7280;">Or copy and paste this link: {{ verify_url }}</p>
+{% endblock %}

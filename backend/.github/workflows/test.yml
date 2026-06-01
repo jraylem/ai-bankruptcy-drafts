@@ -1,0 +1,36 @@
+name: Test
+
+# Runs the BE unit suite on every pull request targeting an active
+# branch (feat/agt-revamp from co-devs, develop from feat/agt-revamp
+# promotion, main from develop promotion) so reviewers see CI status
+# before merging. PR-only by design — pushes to those branches are
+# already gated by the test-agt-gate job in deploy.yml (for AGT) and
+# can be similarly gated for develop/main if/when needed.
+
+on:
+  pull_request:
+    branches:
+      - feat/agt-revamp
+      - develop
+      - main
+
+jobs:
+  test-agt:
+    runs-on: ubuntu-latest
+    environment: agt
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.12'
+          enable-cache: true
+      - name: Sync dependencies
+        run: uv sync --frozen
+      - name: Materialize .env from agt environment vars
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        run: echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+      - name: Run core unit tests
+        run: ./test_core.sh -m unit

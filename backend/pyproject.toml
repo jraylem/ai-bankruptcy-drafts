@@ -1,0 +1,113 @@
+[project]
+name = "ai-chatbot-be"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.16.4",
+    "anthropic>=0.73.0",
+    "asyncpg>=0.30.0",
+    "bcrypt>=4.2.1",
+    "beautifulsoup4>=4.12.0",
+    "httpx>=0.27.0",
+    "pdfplumber>=0.11.0",
+    "docxtpl>=0.20.1",
+    "docx2txt>=0.8",
+    "fastapi>=0.116.1",
+    "langchain>=0.3.27",
+    "langchain-anthropic>=0.3.0",
+    "langchain-community>=0.3.27",
+    "langchain-core>=0.3.74",
+    "langchain-openai>=0.3.30",
+    "langchain-postgres>=0.0.15",
+    "langchain-text-splitters>=0.3.9",
+    "langgraph>=0.6.5",
+    "langsmith>=0.7.0",
+    "openai>=1.99.9",
+    "passlib[bcrypt]>=1.7.4",
+    "pydantic[email]>=2.11.7",
+    "pydantic-settings>=2.10.1",
+    "pypdf>=6.0.0",
+    "pypdf2>=3.0.1",
+    "python-dateutil>=2.9.0.post0",
+    "python-dotenv>=1.1.1",
+    "python-jose[cryptography]>=3.3.0",
+    "python-multipart>=0.0.20",
+    "sqlalchemy>=2.0.43",
+    "uvicorn[standard]>=0.35.0",
+    "psycopg-binary>=3.2.10",
+    "docx2pdf>=0.1.8",
+    "pikepdf>=10.0.2",
+    "google-auth>=2.46.0",
+    "google-auth-oauthlib>=1.2.2",
+    "google-api-python-client>=2.187.0",
+    "langchain-google-community>=2.0.0",
+    "langfuse>=3.0.0",
+    "paramiko>=3.5.0",
+    "taskiq>=0.12.0",
+    "taskiq-redis>=1.2.0",
+    "boto3>=1.35.0",
+    "python-docx>=1.1.0",
+    "openpyxl>=3.1.0",
+    "stripe>=12.0.0",
+    "resend>=0.6.0",
+    "rapidfuzz>=3.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "pytest-mock>=3.12",
+    "syrupy>=4.6",
+    "pre-commit>=4.0",
+    "pytest-cov>=5.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-ra --strict-markers"
+markers = [
+    "unit: fast, no I/O, no external mocks beyond monkeypatch",
+    "integration: touches DB, filesystem, or requires testcontainers",
+    "e2e: full API flow via FastAPI TestClient",
+]
+
+# Coverage scope is hardcoded to src/core — that's the agentic pipeline
+# we own. Other src/ subpackages (chatbot, motion_filling, courtdrive,
+# etc.) are legacy and excluded from coverage reporting on purpose.
+#
+# `fail_under = 85` is enforced by the pre-push hook (test_core.sh runs
+# with --coverage when invoked by pre-commit). Manual invocations
+# without the --coverage flag skip this gate entirely so iteration
+# stays fast.
+[tool.coverage.run]
+source = ["src/core"]
+branch = true
+omit = [
+    "*/__pycache__/*",
+    "*/tests/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false
+# Floor — current baseline at the time of introduction was 79.32% with
+# scope=src/core (the broad scope, including I/O-glue layers like
+# repositories, R2 client, Gmail backend, and HTTP routers that are
+# integration-tested rather than unit-tested). Set at 79 so the gate
+# prevents REGRESSIONS without forcing immediate refactors. Ratchet up
+# as the agentic-pipeline coverage grows.
+fail_under = 79
+exclude_also = [
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "\\.\\.\\.",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"

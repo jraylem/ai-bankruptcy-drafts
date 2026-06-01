@@ -1,0 +1,773 @@
+# serializer version: 1
+# name: test_connectors_snapshot
+  list([
+    dict({
+      'description': 'Search emails from Gmail',
+      'display_name': 'Gmail',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'gmail',
+    }),
+    dict({
+      'description': 'Search court drive documents',
+      'display_name': 'Court Drive',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'court_drive',
+    }),
+    dict({
+      'description': 'Search case-specific vector knowledge base. Leave text_query blank to auto-derive the query from the variable name (default behavior); set it explicitly for fine-grained control.',
+      'display_name': 'Case Vector',
+      'params': list([
+        dict({
+          'description': 'Optional. Explicit text to retrieve relevant case-file chunks against. Leave blank to auto-derive from the variable name. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'text_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Optional. When true, runs a web-search enhancement pass after case_vector + vision retrieval. Uses the petition-extracted value as an anchor, looks up small pieces of stable external context the petition doesn't carry (e.g. resolving a Florida county name to its judicial circuit number), and reshapes the result to match template_property_marker. Off by default; requires a non-empty current value (i.e. case_vector must first pull SOMETHING — set text_query if the variable name alone won't retrieve the right chunk).",
+          'name': 'enable_web_search',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'case_vector',
+    }),
+    dict({
+      'description': 'Search law practice vector knowledge base',
+      'display_name': 'Law Practice Vector',
+      'params': list([
+        dict({
+          'description': 'Query to search law practice vector store. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'text_query',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'law_practice_vector',
+    }),
+    dict({
+      'description': 'Fetch value from reference data by short_code',
+      'display_name': 'Constants',
+      'params': list([
+        dict({
+          'description': 'The short_code of the reference data to fetch',
+          'name': 'short_code',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'constants',
+    }),
+    dict({
+      'description': 'Value produced deterministically by the server at draft time (e.g. current date from the server clock). No LLM extraction involved.',
+      'display_name': 'System Generated',
+      'params': list([
+        dict({
+          'description': 'Which system value to generate.',
+          'name': 'type',
+          'options': list([
+            dict({
+              'label': 'Current Date',
+              'preview': 'e.g. April 13, 2026',
+              'value': 'current_date',
+            }),
+          ]),
+          'required': True,
+          'type': 'enum',
+        }),
+      ]),
+      'source': 'system_generated',
+    }),
+    dict({
+      'description': "Derive this variable's value from another template variable by applying a rule (e.g. DateFiled + 14 days).",
+      'display_name': 'Dependent on Variable',
+      'params': list([
+        dict({
+          'description': 'The parent template variable this value is derived from.',
+          'name': 'dependent_variable',
+          'required': True,
+          'type': 'template_variable_ref',
+        }),
+        dict({
+          'description': 'The type of value being derived.',
+          'name': 'derived_value_type',
+          'options': list([
+            dict({
+              'label': 'Date',
+              'preview': 'e.g. April 13, 2026',
+              'value': 'date',
+            }),
+          ]),
+          'required': True,
+          'type': 'enum',
+        }),
+        dict({
+          'description': "The rule to apply to the dependent variable's value.",
+          'name': 'rule_effect',
+          'options': list([
+            dict({
+              'label': 'Add days',
+              'value': 'increment_by_days',
+            }),
+            dict({
+              'label': 'Subtract days',
+              'value': 'decrement_by_days',
+            }),
+            dict({
+              'label': 'Add months',
+              'value': 'increment_by_months',
+            }),
+            dict({
+              'label': 'Subtract months',
+              'value': 'decrement_by_months',
+            }),
+            dict({
+              'label': 'Add years',
+              'value': 'increment_by_years',
+            }),
+            dict({
+              'label': 'Subtract years',
+              'value': 'decrement_by_years',
+            }),
+            dict({
+              'label': 'Reformat only (no shift)',
+              'value': 'format_only',
+            }),
+          ]),
+          'required': True,
+          'type': 'enum',
+          'visible_when': dict({
+            'equals': 'date',
+            'field': 'derived_value_type',
+          }),
+        }),
+        dict({
+          'description': "Numeric amount for the rule effect (e.g. '14' for 14 days). Not used when rule_effect is 'format_only'.",
+          'name': 'rule_effect_value',
+          'required': False,
+          'required_when': dict({
+            'field': 'rule_effect',
+            'not_in': list([
+              'format_only',
+            ]),
+          }),
+          'type': 'string',
+          'visible_when': dict({
+            'field': 'rule_effect',
+            'not_in': list([
+              'format_only',
+            ]),
+          }),
+        }),
+      ]),
+      'source': 'dependent_on_variable',
+    }),
+    dict({
+      'description': 'Fetch raw email data from Gmail, extract (left, right) pairs, present the user a dropdown at dry-run/draft time. Picking one pair fills this variable (left) and its declared partner variable (right) in a single step.',
+      'display_name': 'Group Dropdown from Gmail',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Title shown above the dropdown at dry-run/draft time (e.g. 'Docket'). Describes what the user is picking — distinct from the left/right column headers.",
+          'name': 'group_label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Column header for the left column of the dropdown (the value this variable receives), e.g. 'Docket Number'",
+          'name': 'left_label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Column header for the right column of the dropdown (the value the partner variable receives), e.g. 'Docket Title'",
+          'name': 'right_label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "The sibling template variable (with source unset) that receives the right column's value on pick.",
+          'name': 'right_partner_variable',
+          'required': True,
+          'type': 'template_variable_ref',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'group_dropdown_from_gmail',
+    }),
+    dict({
+      'description': 'Fetch raw data from Court Drive, extract (left, right) pairs, present the user a dropdown at dry-run/draft time. Picking one pair fills this variable (left) and its declared partner variable (right) in a single step.',
+      'display_name': 'Group Dropdown from Court Drive',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Title shown above the dropdown at dry-run/draft time (e.g. 'Docket'). Describes what the user is picking — distinct from the left/right column headers.",
+          'name': 'group_label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Column header for the left column of the dropdown (the value this variable receives)',
+          'name': 'left_label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Column header for the right column of the dropdown (the value the partner variable receives)',
+          'name': 'right_label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "The sibling template variable (with source unset) that receives the right column's value on pick.",
+          'name': 'right_partner_variable',
+          'required': True,
+          'type': 'template_variable_ref',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'group_dropdown_from_court_drive',
+    }),
+    dict({
+      'description': 'Fetch raw email data from Gmail, generate up to 3 short text candidates for the author to click as a starting point. The author picks one, edits it if needed, and the final text fills this variable.',
+      'display_name': 'Recommendation Chips from Gmail',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the chips at dry-run/draft time (e.g. 'Change in Circumstances'). Describes what the user is being asked to provide.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Optional name-free / date-free skeleton of the sentence the chip will slot into, used as a tone / structure / rhetorical-framing reference (e.g. 'The Debtor is employed in a capacity where their responsibilities require the handling of sensitive consumer information, and their employer places significant trust in them to do so.'). Do NOT include specific names, dates, or amounts — those come from the source material.",
+          'name': 'example_sentence',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'reco_chips_from_gmail',
+    }),
+    dict({
+      'description': 'Fetch raw data from Court Drive, generate up to 3 short text candidates for the author to click as a starting point. The author picks one, edits it if needed, and the final text fills this variable.',
+      'display_name': 'Recommendation Chips from Court Drive',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the chips at dry-run/draft time (e.g. 'Change in Circumstances'). Describes what the user is being asked to provide.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Optional name-free / date-free skeleton of the sentence the chip will slot into, used as a tone / structure / rhetorical-framing reference (e.g. 'The Debtor is employed in a capacity where their responsibilities require the handling of sensitive consumer information, and their employer places significant trust in them to do so.'). Do NOT include specific names, dates, or amounts — those come from the source material.",
+          'name': 'example_sentence',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'reco_chips_from_court_drive',
+    }),
+    dict({
+      'description': "Similarity-search the case's uploaded documents (petition, schedules, etc.), generate up to 3 short text candidates for the author to click as a starting point. The author picks one, edits it if needed, and the final text fills this variable.",
+      'display_name': 'Recommendation Chips from Case Documents',
+      'params': list([
+        dict({
+          'description': "Required similarity query for the case_file collection (e.g. 'employer occupation income'). Shapes which case-file chunks the agent sees at generation time. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).",
+          'name': 'text_query',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the chips at dry-run/draft time (e.g. 'Employment Description'). Describes what the user is being asked to provide.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Required name-free / date-free skeleton of the sentence the chip will slot into, used as the authoritative tone / structure / rhetorical-framing reference (e.g. 'The Debtor is employed in a capacity where their responsibilities require the handling of sensitive consumer information, and their employer places significant trust in them to do so.'). Do NOT include specific names, dates, or amounts — those come from the source material.",
+          'name': 'example_sentence',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'reco_chips_from_case_vector',
+    }),
+    dict({
+      'description': "Generate up to 3 short text candidates by composing context from N already-resolved variable values (instead of fetching from gmail / court_drive / case_vector). Use when the chip generator needs to synthesize from prior agent outputs — e.g. a 'change in circumstances' reco-chips field that draws on the trustee's dismissal reason and the prior case's schedules.",
+      'display_name': 'Recommendation Chips from Dependent Variables',
+      'params': list([
+        dict({
+          'description': 'Header shown above the chips at dry-run/draft time. Describes what the user is being asked to provide.',
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Required name-free / date-free skeleton of the sentence the chip will slot into, used as the authoritative tone / structure / rhetorical-framing reference AND the heal target after the user picks/types. Do NOT include specific names, dates, or amounts.',
+          'name': 'example_sentence',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Names of already-resolved variables whose values will be composed as context for chip generation. Each must reference a variable in the same template_spec whose stage is LLM_DRAFT or SYSTEM_GENERATED (i.e. resolves before the user-input pause). At least one of dependent_variables, case_vector_queries, or dependent_chip_variables must be non-empty.',
+          'name': 'dependent_variables',
+          'required': False,
+          'type': 'string_list',
+        }),
+        dict({
+          'description': "Optional inline case_vector retrievals composed into the chip generator's source material. Each entry is a {label, text_query} object; text_query supports {{variable}} substitution at chip-generation time. Saves authors from declaring a separate case_vector variable per retrieval (e.g. Schedule I/J).",
+          'name': 'case_vector_queries',
+          'required': False,
+          'type': 'object_list',
+        }),
+        dict({
+          'description': "Names of OTHER reco_chips_from_dependent_variables fields whose GENERATED chip arrays (NOT user picks) feed this generator's context for tonal alignment. Targets must also be reco_chips_from_dependent_variables; cycles are rejected at compose time.",
+          'name': 'dependent_chip_variables',
+          'required': False,
+          'type': 'string_list',
+        }),
+        dict({
+          'description': "Optional extra prompt guidance for the chip-generation LLM (e.g. 'Synthesize 3 plausible dismissal reasons grounded in the trustee's stated reason and the debtor's prior schedules.').",
+          'name': 'instruction',
+          'required': False,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'reco_chips_from_dependent_variables',
+    }),
+    dict({
+      'description': "Fetch raw email data from Gmail, extract up to 20 distinct options matching example_format, present a single-select dropdown at dry-run/draft time. The user's pick is healed for grammar + tone before filling this variable.",
+      'display_name': 'Dropdown from Gmail',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the dropdown at dry-run/draft time (e.g. 'Motion Type'). Describes what the user is being asked to select.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Required example of what each extracted option should look like (e.g. 'Motion to Modify Plan' or 'Docket 42 — Notice of Appearance'). Shapes the extraction agent's output. Not used at heal time.",
+          'name': 'example_format',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'dropdown_from_gmail',
+    }),
+    dict({
+      'description': "Fetch raw data from Court Drive, extract up to 20 distinct options matching example_format, present a single-select dropdown at dry-run/draft time. The user's pick is healed for grammar + tone before filling this variable.",
+      'display_name': 'Dropdown from Court Drive',
+      'params': list([
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the dropdown at dry-run/draft time (e.g. 'Motion Type'). Describes what the user is being asked to select.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Required example of what each extracted option should look like (e.g. 'Motion to Modify Plan' or 'Docket 42 — Notice of Appearance'). Shapes the extraction agent's output. Not used at heal time.",
+          'name': 'example_format',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'dropdown_from_court_drive',
+    }),
+    dict({
+      'description': "Lightweight prose form. At dry-run/draft time the FE renders a textarea under `label` (with `placeholder` as the hint and `example_output_sentence` as the tone target shown below the textarea). The user types short attorney-authored prose (e.g. 'Basis for Objection'); the value flows through the grammar/tone heal pass against `example_output_sentence` before filling this variable. No file uploads, no LLM enhancement step — distinct from User Input with Supporting Docs.",
+      'display_name': 'User Input — Plain Text',
+      'params': list([
+        dict({
+          'description': "Header shown above the textarea at dry-run/draft time (e.g. 'Basis for Objection'). Describes what the user is being asked to write.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Optional placeholder text inside the textarea — a one-line FE hint about the expected content. Leave empty when the label is self-explanatory.',
+          'name': 'placeholder',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Required name-free / date-free skeleton of the polished sentence the heal step should produce. Drives the heal LLM as an explicit tone + structure target so the user's typed prose comes out in consistent legal-motion register regardless of how casually they wrote it. Should NOT contain specific names / dates / amounts — those come from the user's input.",
+          'name': 'example_output_sentence',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'user_input_plain_text',
+    }),
+    dict({
+      'description': 'Calendar form. At dry-run/draft time the FE renders a date picker under `label`; the user picks a date which is rendered using `format` (strftime) and fills this variable verbatim. No heal pass — the value is already in its final docx-ready form. Use this when the variable is a date the user supplies per case (e.g. dismissal date, hearing date) — distinct from system_generated.current_date (today) or dependent_on_variable date math.',
+      'display_name': 'User Input — Date',
+      'params': list([
+        dict({
+          'description': "Header shown above the date picker at dry-run/draft time (e.g. 'Date case was dismissed').",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Optional helper text shown next to the picker. Leave empty when the label is self-explanatory.',
+          'name': 'placeholder',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "strftime format string used to render the picked date into the docx placeholder. Default `%B %-d, %Y` (e.g. 'April 1, 2026') matches system_generated.current_date and dependent_on_variable defaults so cross-stage date math reads consistently.",
+          'name': 'format',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'user_input_date',
+    }),
+    dict({
+      'description': "Pure user-input form. At dry-run/draft time the FE renders a free-text area plus a file picker; the user types an explanation and uploads supporting documents (PDFs, DOCX, TXT/MD, images) to POST /cases/{case_id}/supporting-docs before resuming. On resume the server reads the user's text in the context of the uploaded docs with an Opus multimodal call and produces one polished, corroborated paragraph that fills this variable. Bypasses the standard grammar/tone heal pass — the enhancement step IS the polish.",
+      'display_name': 'User Input with Supporting Docs',
+      'params': list([
+        dict({
+          'description': "Header shown above the textarea + uploader at dry-run/draft time (e.g. 'Letter of Explanation'). Describes what the user is being asked to write and substantiate.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'user_input_with_supporting_docs',
+    }),
+    dict({
+      'description': "READ-ONLY. The template agent emits this whenever a value (or substring of a value) extracted as one variable also appears elsewhere in the document in a different surrounding context. AutoDeriveAgent extracts the right portion from the parent variable's already-resolved value at fill time. Parent and source are not editable.",
+      'display_name': 'Auto-Derived from Variable',
+      'params': list([
+        dict({
+          'description': 'The parent variable whose resolved value drives this derivation.',
+          'name': 'dependent_variable',
+          'required': True,
+          'type': 'template_variable_ref',
+        }),
+      ]),
+      'source': 'auto_derived_from_variable',
+    }),
+    dict({
+      'description': "Pre-fetch a list of options from the case PDFs and present the user a multi-select card UI at dry-run/draft time. Each option is one string (matching one of `example_formats`). The user picks K of N; the resolved value is the Oxford-comma-joined prose string of the picks (e.g. 'A, B, and C'), ready to drop into a docx slot directly. UserInputHealAgent then aligns punctuation / suffix labels against the field's template_property_marker. Source-agnostic — the strings can represent assets, creditors, claims, hearings, etc.",
+      'display_name': 'Multi-Select from Case Documents',
+      'params': list([
+        dict({
+          'description': "Panel heading shown to the user (e.g. 'Select Assets for Reaffirmation').",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Optional sub-instruction shown below the label (e.g. 'Select the assets you want to mention in the motion. You can select multiple.').",
+          'name': 'instruction',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Topical / section query — drives BOTH passes: (1) pgvector similarity retrieval over the case_file collection (DropdownAgent first pass), and (2) the vision-fallback section locator surfaced to MultiSelectVisionAgent telling the LLM WHERE in the petition PDF to look. Write as section + topic prose so it works for both, e.g. 'Schedule A/B (Real and Personal Property) — list every real property and every vehicle the debtor owns; skip household goods'. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).",
+          'name': 'text_query',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'One or more example option strings. The DropdownAgent extracts options matching ANY of these shapes. Use multiple entries when one source produces options of distinct shapes (e.g. vehicles AND properties in one asset picker). Multi-line entries (`\\n`-separated) render as multi-line cards in the awaiting-input modal.',
+          'name': 'example_formats',
+          'required': True,
+          'type': 'string_list',
+        }),
+        dict({
+          'description': 'Minimum number of options the user must pick (defaults to 1).',
+          'name': 'min_picks',
+          'required': False,
+          'type': 'number',
+        }),
+        dict({
+          'description': 'Maximum number of options the user may pick. Leave empty for unbounded.',
+          'name': 'max_picks',
+          'required': False,
+          'type': 'number',
+        }),
+        dict({
+          'description': "Separator between items for non-Oxford joins (defaults to ', '). Used as the comma between non-final items even when oxford=true.",
+          'name': 'list_joiner',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When true (default), render 1/2/3+ picks with Oxford-comma logic ('A', 'A and B', 'A, B, and C'). When false, join all picks with `list_joiner` literally.",
+          'name': 'oxford',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'multi_select_from_case_vector',
+    }),
+    dict({
+      'description': "Pre-fetch a list of options from the case's Gmail correspondence and present the user a multi-select card UI at dry-run/draft time. Each option is one string (matching one of `example_formats`). The user picks K of N; the resolved value is the Oxford-comma-joined prose string of the picks (e.g. 'A, B, and C'), ready to drop into a docx slot directly. UserInputHealAgent then aligns punctuation / suffix labels against the field's template_property_marker. Use this when options live in case email threads — e.g. picking creditors from Proof of Claim filings, picking dockets from clerk notices.",
+      'display_name': 'Multi-Select from Gmail',
+      'params': list([
+        dict({
+          'description': "Panel heading shown to the user (e.g. 'Select Creditors that Altered Plan Terms').",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Optional sub-instruction shown below the label.',
+          'name': 'instruction',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email subjects. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'subject_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': 'Query to search email body. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).',
+          'name': 'body_query',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When checked (default), the BE adds the current case's number variants as an AND clause. Uncheck for cross-case templates that need to reach into another case's email thread (typically combined with {{prior_case_number}} in the query).",
+          'name': 'scope_to_current_case',
+          'required': False,
+          'type': 'boolean',
+        }),
+        dict({
+          'description': 'One or more example option strings. The DropdownAgent extracts options matching ANY of these shapes. Use multiple entries when one source produces options of distinct shapes. Multi-line entries (`\\n`-separated) render as multi-line cards in the awaiting-input modal.',
+          'name': 'example_formats',
+          'required': True,
+          'type': 'string_list',
+        }),
+        dict({
+          'description': 'Minimum number of options the user must pick (defaults to 1).',
+          'name': 'min_picks',
+          'required': False,
+          'type': 'number',
+        }),
+        dict({
+          'description': 'Maximum number of options the user may pick. Leave empty for unbounded.',
+          'name': 'max_picks',
+          'required': False,
+          'type': 'number',
+        }),
+        dict({
+          'description': "Separator between items for non-Oxford joins (defaults to ', '). Used as the comma between non-final items even when oxford=true.",
+          'name': 'list_joiner',
+          'required': False,
+          'type': 'string',
+        }),
+        dict({
+          'description': "When true (default), render 1/2/3+ picks with Oxford-comma logic ('A', 'A and B', 'A, B, and C'). When false, join all picks with `list_joiner` literally.",
+          'name': 'oxford',
+          'required': False,
+          'type': 'boolean',
+        }),
+      ]),
+      'source': 'multi_select_from_gmail',
+    }),
+    dict({
+      'description': "Similarity-search the case's uploaded documents (petition, schedules, etc.), extract up to 20 distinct options matching example_format, present a single-select dropdown at dry-run/draft time. The user's pick is healed for grammar + tone before filling this variable.",
+      'display_name': 'Dropdown from Case Documents',
+      'params': list([
+        dict({
+          'description': "Required similarity query for the case_file collection (e.g. 'motion type'). Shapes which case-file chunks the agent sees at extraction time. Supports {{variable}} references; substituted at fetch time with the resolved value of the named variable (must be LLM_DRAFT or SYSTEM_GENERATED stage).",
+          'name': 'text_query',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the dropdown at dry-run/draft time (e.g. 'Motion Type'). Describes what the user is being asked to select.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Required example of what each extracted option should look like (e.g. 'Motion to Modify Plan' or 'Docket 42 — Notice of Appearance'). Shapes the extraction agent's output. Not used at heal time.",
+          'name': 'example_format',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'dropdown_from_case_vector',
+    }),
+    dict({
+      'description': "Present a single-select dropdown whose options come from a curated reference_data list (currently the attorney roster under short_code 'ATTORNEYS'). No LLM extraction — options are a direct DB read at dry-run/draft pause time. The user's pick is healed against the field's template_property_marker (preferred-format target) before filling, so a roster entry like 'Chad Van Horn' still heals to 'Chad Van Horn, Esq.' when the template's marker uses the suffix'd form.",
+      'display_name': 'Dropdown from Constants',
+      'params': list([
+        dict({
+          'description': "short_code of the reference_data row whose JSON value holds the pickable list (e.g. 'ATTORNEYS'). Must match an existing reference_data entry; the validator rejects unknown codes at compose time.",
+          'name': 'reference_short_code',
+          'required': True,
+          'type': 'string',
+        }),
+        dict({
+          'description': "Header shown above the dropdown at dry-run/draft time (e.g. 'Motion Type'). Describes what the user is being asked to select.",
+          'name': 'label',
+          'required': True,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'dropdown_from_constants',
+    }),
+    dict({
+      'description': 'Mark this variable as a slot. Each parent template that attaches this child fills the slot via its own Bundling tab. The same child can be paired with many parents and have its slots filled differently for each pairing. Only meaningful for child-only templates (bundle_role=child_only).',
+      'display_name': 'Inherit from Parent',
+      'params': list([
+        dict({
+          'description': 'Optional placeholder shown when this child is dry-run alone (no parent attached). Useful for studio iteration before bundling lands.',
+          'name': 'fallback_value',
+          'required': False,
+          'type': 'string',
+        }),
+      ]),
+      'source': 'inherit_from_parent',
+    }),
+  ])
+# ---

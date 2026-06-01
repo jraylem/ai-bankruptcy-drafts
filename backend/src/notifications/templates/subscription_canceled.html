@@ -1,0 +1,8 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>Your subscription has been canceled</h2>
+<p>Your Jurisgentic subscription for <strong>{{ firm_name }}</strong> has been canceled. You will retain access until the end of your current billing period.</p>
+<p>If this was a mistake or you'd like to resubscribe, you can do so from your dashboard at any time.</p>
+<a href="{{ dashboard_url }}" class="btn">Go to Dashboard</a>
+<p>We're sorry to see you go. If there's anything we could have done better, please let us know by replying to this email.</p>
+{% endblock %}

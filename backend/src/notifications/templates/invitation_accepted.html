@@ -1,0 +1,7 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>{{ new_member_name }} has joined {{ firm_name }}</h2>
+<p>Great news — <strong>{{ new_member_name }}</strong> has accepted your invitation and is now a member of <strong>{{ firm_name }}</strong> on Jurisgentic.</p>
+<p>You can manage their role and permissions from your firm dashboard.</p>
+<a href="{{ dashboard_url }}" class="btn">Go to Dashboard</a>
+{% endblock %}

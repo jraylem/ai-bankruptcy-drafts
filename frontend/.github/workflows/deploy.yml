@@ -1,0 +1,122 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - feat/agt-revamp
+  pull_request:
+    branches:
+      - develop
+      - main
+      - feat/agt-revamp
+
+jobs:
+  test-agt:
+    if: |
+      (github.event_name == 'push' && github.ref == 'refs/heads/feat/agt-revamp')
+      || github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: Lint
+        run: npm run lint
+      - name: Type-check + build
+        run: npm run build
+      - name: Run vitest with coverage (studio scope)
+        run: npm run test:coverage
+      - name: Append coverage report to job summary
+        if: always()
+        shell: bash
+        run: node scripts/coverage-summary.cjs >> "$GITHUB_STEP_SUMMARY"
+      - name: Run Playwright e2e suite
+        run: npm run test:e2e
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 14
+      - name: Upload Playwright report on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
+
+  deploy-staging:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Deploy to Staging
+        uses: appleboy/ssh-action@v1
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ALL_VARS
+          script: |
+            cd ~/ai-chatbot-fe
+            git fetch origin develop
+            git reset --hard origin/develop
+            echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+            docker compose up -d --build
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@v1
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ALL_VARS
+          script: |
+            cd ~/AI-Petition-Reviewer/ai-chatbot-fe
+            git fetch origin main
+            git reset --hard origin/main
+            echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+            docker compose up -d --build
+
+  deploy-agt:
+    if: github.ref == 'refs/heads/feat/agt-revamp' && github.event_name == 'push'
+    needs: test-agt
+    runs-on: ubuntu-latest
+    environment: agt
+    steps:
+      - name: Deploy to AGT
+        uses: appleboy/ssh-action@v1
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ALL_VARS
+          script: |
+            cd ~/ai-chatbot-fe
+            git fetch origin feat/agt-revamp
+            git reset --hard origin/feat/agt-revamp
+            echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+            docker compose up -d --build

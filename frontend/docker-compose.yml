@@ -1,0 +1,17 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai_chatbot_frontend
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes: []
+    networks:
+      - ai-chatbot-be_app-network
+
+networks:
+  ai-chatbot-be_app-network:
+    external: true
+    name: bkdrafts-be_app-network

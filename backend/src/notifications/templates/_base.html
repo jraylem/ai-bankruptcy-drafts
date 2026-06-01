@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body { margin: 0; padding: 0; background: #f4f4f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    .wrapper { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .header { background: #1a1a2e; padding: 28px 40px; }
+    .header h1 { margin: 0; color: #ffffff; font-size: 20px; font-weight: 600; letter-spacing: 0.3px; }
+    .header span { color: #818cf8; }
+    .body { padding: 36px 40px; color: #374151; font-size: 15px; line-height: 1.7; }
+    .body h2 { margin: 0 0 16px; font-size: 18px; color: #111827; }
+    .btn { display: inline-block; margin: 24px 0; padding: 12px 28px; background: #4f46e5; color: #ffffff !important; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 15px; }
+    .footer { background: #f9fafb; border-top: 1px solid #e5e7eb; padding: 20px 40px; font-size: 12px; color: #9ca3af; text-align: center; }
+    p { margin: 0 0 14px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="header">
+      <h1>Jurisgentic<span>.ai</span></h1>
+    </div>
+    <div class="body">
+      {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+      &copy; Jurisgentic. All rights reserved.<br/>
+      You received this email because of activity on your account.
+    </div>
+  </div>
+</body>
+</html>

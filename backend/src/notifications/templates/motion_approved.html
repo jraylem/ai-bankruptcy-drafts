@@ -1,0 +1,7 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>Motion approved</h2>
+<p>Your <strong>{{ motion_type }}</strong> for case <strong>{{ case_number }}</strong> has been reviewed and approved.</p>
+<p>You can download the finalized document from your dashboard.</p>
+<a href="{{ dashboard_url }}" class="btn">Go to Dashboard</a>
+{% endblock %}

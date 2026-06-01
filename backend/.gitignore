@@ -1,0 +1,31 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+wheels/
+*.egg-info
+
+# Virtual environments
+.venv
+.env
+.env.*
+
+# Secrets
+*.json
+keys/
+
+# Courtdrive profile
+.court_drive_profile
+
+# Generated & Uploaded Documents
+generated_docx/
+generated_pdf/
+uploads/
+src/motion_filling/out
+
+# Coverage artifacts (test_core.sh --coverage)
+htmlcov/
+.coverage
+.coverage.*
+coverage.xml

@@ -1,0 +1,110 @@
+
+============================================================
+[2026-04-07T20:23:19.842911] Service PDF generation failed for cos_objection-sustain_2488dab8-95bb-4ea7-9e00-62322173f8b3_1775593391
+Error: Could not convert to PDF. Install MS Word + pywin32 or LibreOffice (soffice on PATH).
+Traceback:
+Traceback (most recent call last):
+  File "/app/src/tasks/pleading_helpers.py", line 248, in _generate_service_doc
+    pdf_path = generate_pdf_from_payload(payload, name_slug)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_motion_service.py", line 276, in generate_pdf_from_payload
+    return generate_document_from_payload(payload_data, output_basename, "pdf")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_motion_service.py", line 263, in generate_document_from_payload
+    return generate_document(
+           ^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/generator_common.py", line 26, in generate_document
+    return convert_to_pdf(out_docx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_motion_service.py", line 116, in convert_to_pdf
+    raise RuntimeError(
+RuntimeError: Could not convert to PDF. Install MS Word + pywin32 or LibreOffice (soffice on PATH).
+
+
+============================================================
+[2026-04-07T20:25:15.925724] Motion PDF generation failed for objection-sustain_2a47e506-c579-4266-bbb6-54013c1e1b89_1775593512
+Error: Could not convert to PDF. Install MS Word + pywin32 or LibreOffice (soffice on PATH).
+Traceback:
+Traceback (most recent call last):
+  File "/app/src/tasks/pleading_helpers.py", line 201, in _generate_motion_doc
+    pdf_path = generator_func["pdf"](payload, name_slug)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_order_sustaining_objection.py", line 227, in generate_pdf_from_payload
+    return generate_document_from_payload(payload_data, output_basename, "pdf")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_order_sustaining_objection.py", line 214, in generate_document_from_payload
+    return generate_document(
+           ^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/generator_common.py", line 26, in generate_document
+    return convert_to_pdf(out_docx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_order_sustaining_objection.py", line 99, in convert_to_pdf
+    raise RuntimeError(
+RuntimeError: Could not convert to PDF. Install MS Word + pywin32 or LibreOffice (soffice on PATH).
+
+
+============================================================
+[2026-04-10T19:39:48.639030] Motion PDF generation failed for waive_9118adc1-9682-4798-b9c5-b97d49da29db_1775849986
+Error: Could not convert to PDF. Install MS Word + pywin32 or LibreOffice (soffice on PATH).
+Traceback:
+Traceback (most recent call last):
+  File "/app/src/tasks/pleading_helpers.py", line 201, in _generate_motion_doc
+    pdf_path = generator_func["pdf"](payload, name_slug)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_motion_waive.py", line 320, in generate_pdf_from_payload
+    return generate_document_from_payload(payload_data, output_basename, "pdf")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_motion_waive.py", line 307, in generate_document_from_payload
+    return generate_document(
+           ^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/generator_common.py", line 26, in generate_document
+    return convert_to_pdf(out_docx)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_motion_waive.py", line 81, in convert_to_pdf
+    raise RuntimeError(
+RuntimeError: Could not convert to PDF. Install MS Word + pywin32 or LibreOffice (soffice on PATH).
+
+
+============================================================
+[2026-04-13T18:57:27.899159] Motion PDF generation failed for ex-parte-extension_f00f883f-2217-4d5a-a9ac-7abf697ddfb4_1776106647
+Error: unexpected '}'
+Traceback:
+Traceback (most recent call last):
+  File "/app/src/tasks/pleading_helpers.py", line 201, in _generate_motion_doc
+    pdf_path = generator_func["pdf"](payload, name_slug)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_ex_parte_motion_extension.py", line 187, in generate_pdf_from_payload
+    return generate_document_from_payload(payload_data, output_basename, "pdf")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_ex_parte_motion_extension.py", line 174, in generate_document_from_payload
+    return generate_document(
+           ^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/generator_common.py", line 21, in generate_document
+    out_docx = render_docx(template, context, name_slug)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/src/motion_filling/fill_ex_parte_motion_extension.py", line 161, in render_docx
+    doc.render(ctx)
+  File "/app/.venv/lib/python3.12/site-packages/docxtpl/template.py", line 486, in render
+    xml_src = self.build_xml(context, jinja_env)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/docxtpl/template.py", line 433, in build_xml
+    xml = self.render_xml_part(xml, self.docx._part, context, jinja_env)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/docxtpl/template.py", line 319, in render_xml_part
+    raise exc
+  File "/app/.venv/lib/python3.12/site-packages/docxtpl/template.py", line 309, in render_xml_part
+    template = Template(src_xml)
+               ^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/jinja2/environment.py", line 1214, in __new__
+    return env.from_string(source, template_class=cls)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/jinja2/environment.py", line 1111, in from_string
+    return cls.from_code(self, self.compile(source), gs, None)
+                               ^^^^^^^^^^^^^^^^^^^^
+  File "/app/.venv/lib/python3.12/site-packages/jinja2/environment.py", line 771, in compile
+    self.handle_exception(source=source_hint)
+  File "/app/.venv/lib/python3.12/site-packages/jinja2/environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "<unknown>", line 26, in template
+jinja2.exceptions.TemplateSyntaxError: unexpected '}'
+

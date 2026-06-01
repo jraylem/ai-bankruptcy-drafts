@@ -1,0 +1,32 @@
+.git
+.gitignore
+.env
+.env.*
+__pycache__
+**/__pycache__
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.venv
+venv
+node_modules
+
+# Runtime output dirs (mounted as volumes anyway)
+uploads/
+generated_docx/
+generated_pdf/
+
+# Editor/OS
+.vscode
+.idea
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Docs and local notes
+*.md
+plan_modifier/

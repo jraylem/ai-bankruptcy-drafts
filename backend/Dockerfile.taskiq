@@ -1,0 +1,68 @@
+# Taskiq worker for async task processing
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install system dependencies (same as backend for document generation)
+# Using t64 package names for Debian Trixie compatibility (64-bit time_t transition)
+# See: https://lwn.net/Articles/938149/
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+    gcc \
+    g++ \
+    libpq-dev \
+    curl \
+    postgresql-client \
+    ca-certificates \
+    wget \
+    gnupg \
+    libnss3 \
+    libatk-bridge2.0-0 \
+    libx11-6 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxcb1 \
+    libxrandr2 \
+    libcups2t64 \
+    libdrm2 \
+    libgbm1 \
+    libglib2.0-0t64 \
+    libgtk-3-0t64 \
+    libpango-1.0-0 \
+    libasound2t64 \
+    libatspi2.0-0 \
+    libxshmfence1 \
+    fonts-liberation \
+    fonts-unifont \
+    fonts-freefont-ttf \
+    libreoffice \
+    libreoffice-writer \
+    fonts-dejavu \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy dependency files
+COPY pyproject.toml uv.lock ./
+
+# Install uv (Python package manager) from official image
+COPY --from=ghcr.io/astral-sh/uv:0.11.11 /uv /uvx /usr/local/bin/
+
+# Install Python dependencies
+RUN uv sync --frozen
+
+# Copy source code
+COPY src/ ./src/
+
+# Copy bankruptcy knowledge files
+COPY bankruptcy_knowledge/ ./bankruptcy_knowledge/
+
+# Create directories for document generation
+RUN mkdir -p uploads generated_docx generated_pdf
+
+# Set environment variables
+ENV PYTHONPATH=/app/src
+ENV PYTHONUNBUFFERED=1
+ENV TASKIQ_WORKER=true
+
+# Run Taskiq worker with 2 worker processes, each handling 100 concurrent async tasks
+CMD ["uv", "run", "taskiq", "worker", "src.taskiq_app:broker", "--workers", "2", "--max-async-tasks", "100"]

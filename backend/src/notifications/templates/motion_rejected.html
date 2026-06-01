@@ -1,0 +1,8 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>Motion requires revision</h2>
+<p>Your <strong>{{ motion_type }}</strong> for case <strong>{{ case_number }}</strong> has been reviewed and requires changes before it can be approved.</p>
+<p><strong>Reason:</strong> {{ reason }}</p>
+<p>Please log in to your dashboard to review the feedback and make the necessary revisions.</p>
+<a href="{{ dashboard_url }}" class="btn">Review Feedback</a>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>You've been invited to join {{ firm_name }}</h2>
+<p><strong>{{ inviter_name }}</strong> has invited you to join their firm on Jurisgentic — a platform for bankruptcy motion drafting.</p>
+<p>Click the button below to accept the invitation and set up your account. This link expires in <strong>48 hours</strong>.</p>
+<a href="{{ invite_url }}" class="btn">Accept Invitation</a>
+<p>If you didn't expect this invitation, you can safely ignore this email.</p>
+<p style="font-size:13px; color:#6b7280;">Or copy and paste this link: {{ invite_url }}</p>
+{% endblock %}

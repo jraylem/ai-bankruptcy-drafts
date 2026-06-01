@@ -1,0 +1,26 @@
+[2026-03-23 18:52:10] SUMMON session=4d3fd5df-0ae9-4031-8917-bd619e000f61 case=26-01938 status=failed
+[2026-03-23 18:52:11]   - Trigger registered: True (monitoring for future emails)
+[2026-03-23 19:03:34] SUMMON session=7acebc79-03e7-432a-9260-4502736e92fc case=26-01938 status=failed error=Gmail credentials file not found. Tried: /ecf-petition-downloader/credentials.json, /app/src/gmail/credentials.json
+Please download OAuth2 credentials from Google Cloud Console:
+1. Go to https://console.cloud.google.com/
+2. Create/select a project
+3. Enable Gmail API
+4. Create OAuth 2.0 credentials
+5. Download credentials.json to: /ecf-petition-downloader/credentials.json
+[2026-03-23 19:03:35]   - Trigger registered: True (monitoring for future emails)
+[2026-03-23 19:39:37] SUMMON session=51dd23d4-6fcc-49fb-8986-03fac5a9aee5 case=26-01938
+[2026-03-23 19:39:37]   - Emails indexed: 0
+[2026-03-23 19:39:37]   - Collection: gmail_51dd23d4-6fcc-49fb-8986-03fac5a9aee5
+[2026-03-23 19:39:39]   - Trigger registered: True (monitoring for future emails)
+[2026-03-23 20:06:22] SUMMON session=6c81bf2c-f6c0-4aa5-a12f-798547a86f16 case=26-01938
+[2026-03-23 20:06:22]   - Emails indexed: 8
+[2026-03-23 20:06:22]   - Collection: gmail_6c81bf2c-f6c0-4aa5-a12f-798547a86f16
+[2026-03-23 20:06:24]   - Trigger registered: True (monitoring for future emails)
+[2026-03-23 22:05:01] SUMMON session=63789030-5b36-4aa1-89cb-99838e8ae06b case=26-01938
+[2026-03-23 22:05:01]   - Emails indexed: 8
+[2026-03-23 22:05:01]   - Collection: gmail_63789030-5b36-4aa1-89cb-99838e8ae06b
+[2026-03-23 22:05:02]   - Trigger registered: True (monitoring for future emails)
+[2026-03-23 22:07:49] SUMMON session=84e7221c-69f1-4b7a-a598-6139a9aca6eb case=26-01938
+[2026-03-23 22:07:49]   - Emails indexed: 8
+[2026-03-23 22:07:49]   - Collection: gmail_84e7221c-69f1-4b7a-a598-6139a9aca6eb
+[2026-03-23 22:07:50]   - Trigger registered: True (monitoring for future emails)

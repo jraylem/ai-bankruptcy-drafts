@@ -1,0 +1,25 @@
+# Pre-commit / pre-push git hooks for the BE repo.
+#
+# One-time setup per clone (run from repo root):
+#   uv sync
+#   uv run pre-commit install --hook-type pre-push
+#
+# After that, `git push` runs the unit suite locally with coverage
+# enabled. Tests must pass AND src/core coverage must be >= 85%
+# (threshold lives in pyproject.toml under [tool.coverage.report]
+# fail_under) for the push to proceed.
+#
+# Skip in genuine emergencies only — flag in PR description if you do:
+#   git push --no-verify
+
+repos:
+  - repo: local
+    hooks:
+      - id: test-core-unit
+        name: test_core.sh -m unit --coverage
+        description: Run the BE core unit suite + coverage gate before pushing.
+        entry: ./test_core.sh -m unit --coverage
+        language: system
+        stages: [pre-push]
+        pass_filenames: false
+        always_run: true

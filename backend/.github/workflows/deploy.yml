@@ -1,0 +1,112 @@
+name: Deploy
+
+# Deployments. All three environments fire on a plain `push` trigger:
+#   - feat/agt-revamp push → agt server (PR merges from co-devs)
+#   - develop push         → staging (feat/agt-revamp → develop merge)
+#   - main push            → production (develop → main merge)
+#
+# AGT is gated on tests passing first (test-agt-gate job below) — broken
+# code never reaches the agt server. test.yml is PR-only (for the review
+# CI badge); on push, this file's gate is the sole test signal.
+#
+# develop / main are NOT gated here; the existing policy is "revert the
+# merge if tests fail post-merge." Promote to hard gates later if needed
+# by copying the test-agt-gate pattern.
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+      - feat/agt-revamp
+
+jobs:
+  # Hard gate for AGT — runs the same core unit suite test.yml uses.
+  # deploy-agt declares `needs: test-agt-gate`, so a failure blocks the deploy.
+  test-agt-gate:
+    if: github.ref == 'refs/heads/feat/agt-revamp'
+    runs-on: ubuntu-latest
+    environment: agt
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: '3.12'
+          enable-cache: true
+      - name: Sync dependencies
+        run: uv sync --frozen
+      - name: Materialize .env from agt environment vars
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        run: echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+      - name: Run core unit tests
+        run: ./test_core.sh -m unit
+
+  deploy-staging:
+    if: github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+    environment: staging
+    steps:
+      - name: Deploy to Staging
+        uses: appleboy/ssh-action@v1
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ALL_VARS
+          script: |
+            cd ~/ai-chatbot-be
+            git fetch origin develop
+            git reset --hard origin/develop
+            echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+            docker compose down --remove-orphans
+            docker compose up --build -d
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy to Production
+        uses: appleboy/ssh-action@v1
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ALL_VARS
+          script: |
+            cd ~/AI-Petition-Reviewer/ai-chatbot-be
+            git fetch origin main
+            git reset --hard origin/main
+            echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+            docker compose down --remove-orphans
+            docker compose up --build -d
+
+  deploy-agt:
+    if: github.ref == 'refs/heads/feat/agt-revamp'
+    needs: test-agt-gate
+    runs-on: ubuntu-latest
+    environment: agt
+    steps:
+      - name: Deploy to AGT
+        uses: appleboy/ssh-action@v1
+        env:
+          ALL_VARS: ${{ toJSON(vars) }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: ALL_VARS
+          script: |
+            cd ~/ai-chatbot-be
+            git fetch origin feat/agt-revamp
+            git reset --hard origin/feat/agt-revamp
+            echo "$ALL_VARS" | jq -r 'to_entries[] | "\(.key)=\(.value)"' > .env
+            docker compose down --remove-orphans
+            docker compose up --build -d

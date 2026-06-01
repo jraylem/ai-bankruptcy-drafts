@@ -1,0 +1,212 @@
+services:
+  # Backend FastAPI application
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ai_chatbot_backend
+    restart: unless-stopped
+    # Override the prod multi-worker CMD with single-worker + --reload for
+    # local dev (incompatible flags). Railway uses the Dockerfile CMD as-is.
+    command: ["./wait-for-it.sh", "uv", "run", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+    environment:
+      - NODE_ENV=production
+      - WATCHFILES_FORCE_POLLING=true
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./src:/app/src
+      - ./migrations:/app/migrations
+      - ./uploads:/app/uploads
+      - ${SFTP_DESTINATION}:/app/uploads/archived_petitions:ro
+      - ./bankruptcy_knowledge:/app/bankruptcy_knowledge
+      - ./generated_docx:/app/generated_docx
+      - ./generated_pdf:/app/generated_pdf
+    depends_on:
+      - vectorstore
+      - chat_db
+      - user_db
+      - redis
+    networks:
+      - app-network
+
+  # Vectorstore database for document embeddings
+  vectorstore:
+    image: pgvector/pgvector:0.8.0-pg16
+    container_name: bankruptcy_vectorstore
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${VECTORSTORE_DB}
+      POSTGRES_USER: ${VECTORSTORE_USER}
+      POSTGRES_PASSWORD: ${VECTORSTORE_PASSWORD}
+    env_file:
+      - .env
+    ports:
+      - "${VECTORSTORE_PORT}:5432"
+    volumes:
+      - vectorstore_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Session database for user sessions and PDF metadata
+  chat_db:
+    image: postgres:17
+    container_name: bankruptcy_chat_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${CHAT_DATABASE_DB}
+      POSTGRES_USER: ${CHAT_DATABASE_USER}
+      POSTGRES_PASSWORD: ${CHAT_DATABASE_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    ports:
+      - "${CHAT_DATABASE_PORT}:5432"
+    volumes:
+      - chat_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # User authentication database
+  user_db:
+    image: postgres:17
+    container_name: bankruptcy_user_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${USER_DATABASE_DB}
+      POSTGRES_USER: ${USER_DATABASE_USER}
+      POSTGRES_PASSWORD: ${USER_DATABASE_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
+    ports:
+      - "${USER_DATABASE_PORT}:5432"
+    volumes:
+      - user_db_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # Redis for Taskiq task queue
+  redis:
+    image: redis:7-alpine
+    container_name: bankruptcy_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  # ============================================================================
+  # TASKIQ WORKERS (async-native)
+  # Each worker handles 100 concurrent async tasks
+  # ============================================================================
+
+  # Taskiq worker for all async tasks (pleading + review)
+  taskiq_worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.taskiq
+    deploy:
+      replicas: 1
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+      - ./uploads:/app/uploads
+      - ${SFTP_DESTINATION}:/app/uploads/archived_petitions:ro
+      - ./generated_docx:/app/generated_docx
+      - ./generated_pdf:/app/generated_pdf
+      - ./bankruptcy_knowledge:/app/bankruptcy_knowledge
+    depends_on:
+      redis:
+        condition: service_healthy
+      vectorstore:
+        condition: service_started
+      chat_db:
+        condition: service_started
+    networks:
+      - app-network
+
+  # Taskiq worker for v2 core/pleading template drafts (separate broker, distinct queue)
+  # Runs against `src.core.components.pleading.broker:core_broker` (queue_name "taskiq:core")
+  # so it doesn't collide with the legacy taskiq_worker. REQUIRED for v2 Draft v2 page to function.
+  taskiq_worker_core:
+    build:
+      context: .
+      dockerfile: Dockerfile.taskiq
+    command: ["uv", "run", "taskiq", "worker", "src.core.components.pleading.broker:core_broker", "--workers", "2", "--max-async-tasks", "100"]
+    deploy:
+      replicas: 1
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+      - ./uploads:/app/uploads
+      - ./generated_docx:/app/generated_docx
+      - ./generated_pdf:/app/generated_pdf
+      - ./bankruptcy_knowledge:/app/bankruptcy_knowledge
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # Taskiq scheduler for v1 periodic tasks (stale cleanup every 5 min).
+  # Default CMD runs `taskiq scheduler src.taskiq_scheduler:scheduler`.
+  taskiq_scheduler:
+    build:
+      context: .
+      dockerfile: Dockerfile.taskiq-scheduler
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  # Taskiq scheduler for v2 core_broker periodic tasks (case_inbox ingest +
+  # archive crons). Separate container from taskiq_scheduler because
+  # TaskiqScheduler binds to a single broker for dispatch — a multi-broker
+  # scheduler misroutes v2 tasks to the v1 queue. Same image, different
+  # entry point.
+  taskiq_scheduler_core:
+    build:
+      context: .
+      dockerfile: Dockerfile.taskiq-scheduler
+    command: ["uv", "run", "taskiq", "scheduler", "src.taskiq_scheduler:core_scheduler"]
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - app-network
+
+volumes:
+  vectorstore_data:
+  chat_db_data:
+  user_db_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge

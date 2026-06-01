@@ -1,0 +1,25 @@
+{% extends "_base.html" %}
+{% block content %}
+<h2>New sign-up waiting for approval</h2>
+<p>A new user has verified their email and is waiting for access to Jurisgentic.</p>
+<table style="width:100%;border-collapse:collapse;margin:0 0 20px;">
+  <tr>
+    <td style="padding:8px 0;color:#6b7280;font-size:13px;width:100px;">Name</td>
+    <td style="padding:8px 0;font-weight:600;">{{ user_name }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;color:#6b7280;font-size:13px;">Email</td>
+    <td style="padding:8px 0;font-weight:600;">{{ user_email }}</td>
+  </tr>
+  <tr>
+    <td style="padding:8px 0;color:#6b7280;font-size:13px;">Law Firm</td>
+    <td style="padding:8px 0;font-weight:600;">{{ firm_name if firm_name else '—' }}</td>
+  </tr>
+</table>
+<p>Review this sign-up and take action:</p>
+<div style="display:flex;gap:12px;margin:24px 0;">
+  <a href="{{ approve_url }}" class="btn" style="background:#16a34a;">Approve Access</a>
+  <a href="{{ deny_url }}" class="btn" style="background:#dc2626;margin-left:12px;">Deny Access</a>
+</div>
+<p style="font-size:13px;color:#6b7280;">These links are single-use and expire in 7 days. If neither is clicked, the user will remain on the waitlist.</p>
+{% endblock %}
